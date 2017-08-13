@@ -1,0 +1,61 @@
+namespace C17_Ex01_1
+{
+    class Helper
+    {
+        public static Program.eOrder CheckAscendingOrDescendingNumber(int i_numberToCheck)
+        {
+            int isAscending = 0;
+            int isDescending = 0;
+            int digitSaved = i_numberToCheck % 10;
+            int numberOfComparisons = 0;
+
+            if (i_numberToCheck / 10 == 0)
+            {
+                i_numberToCheck = 0;
+            }
+            while (i_numberToCheck > 0)
+            {
+                numberOfComparisons++;
+                i_numberToCheck /= 10;
+
+                if (digitSaved > i_numberToCheck % 10)
+                {
+                    isAscending++;
+                }
+                else if (digitSaved < i_numberToCheck % 10)
+                {
+                    isDescending++;
+                }
+                digitSaved = i_numberToCheck % 10;
+                if (i_numberToCheck < 10)
+                {
+                    break;
+                }
+
+            }
+            if (isAscending == numberOfComparisons && isDescending == 0)
+            {
+                return Program.eOrder.Asc;
+            }
+            if (isDescending == numberOfComparisons && isAscending == 0)
+            {
+                return Program.eOrder.Desc;
+            }
+
+            return Program.eOrder.None;
+            //return 0;
+        }
+
+        public static string DecimalToBinary(int i_numberToConvert)
+        {
+            string result = string.Empty;
+            while (i_numberToConvert > 0)
+            {
+                int remainder = i_numberToConvert % 2;
+                i_numberToConvert /= 2;
+                result = remainder.ToString() + result;
+            }
+            return result;
+        }
+    }
+}
