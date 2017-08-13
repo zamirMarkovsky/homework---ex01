@@ -1,0 +1,118 @@
+using System;
+
+namespace C17_Ex01_1
+{
+    class Program
+    {
+        public const int k_NumberOfUserInputs = 4;
+        public const int k_NumberOfdigits = 4;
+        public static void Main()
+        {
+            int io_bineryNumbersLengthSum = 0;
+            int io_counterOfAscendingNums = 0;
+            int io_counterOfDescendingNums = 0;
+            int io_numbersSum = 0;
+            int inteructionsCounter = 1;
+
+            Console.WriteLine("Please enter {0} numbers with {1} digits each: \n", k_NumberOfUserInputs, k_NumberOfdigits);
+
+            while (inteructionsCounter <= k_NumberOfUserInputs)
+            {
+                int numberFromUser;
+
+                Console.Write("Number {0}: ", inteructionsCounter);
+                string numberUserInput = Console.ReadLine();
+
+                bool validNumberfromUser = int.TryParse(numberUserInput, out numberFromUser);
+                if (numberUserInput != null)
+                {
+                    validNumberfromUser = validNumberfromUser && (numberFromUser > 0) && (numberUserInput.Length == 4);
+                }
+                if (!validNumberfromUser)
+                {
+                    Console.WriteLine("invalid input, please try again!");
+                }
+                else
+                {
+                    string numberInBinary = DecimalToBinary(numberFromUser);
+                    Console.WriteLine("Number {0} in binary: {1}", inteructionsCounter, numberInBinary);
+                    io_bineryNumbersLengthSum += numberInBinary.Length;
+
+                    int isNumAscendingOrDescending = CheckAscendingOrDescendingNumber(numberFromUser);
+                    if (isNumAscendingOrDescending == 1)
+                    {
+                        io_counterOfAscendingNums++;
+                    }
+                    else if (isNumAscendingOrDescending == 2)
+                    {
+                        io_counterOfDescendingNums++;
+                    }
+                    io_numbersSum += numberFromUser;
+                    inteructionsCounter++;
+                }
+            }
+            Console.WriteLine("===============================================");
+
+            float avgOfBinaryNumLengths = (float)io_bineryNumbersLengthSum / k_NumberOfUserInputs;
+            float avgOfNumbers = (float)io_numbersSum / k_NumberOfUserInputs;
+
+            Console.WriteLine("The avarage of binary numbers lengths is {0}", avgOfBinaryNumLengths);
+            Console.WriteLine("There are {0} numbers which are ascending series and {1} which are descending",
+                              io_counterOfAscendingNums, io_counterOfDescendingNums);
+            Console.WriteLine("The avarage of numbers inserted is {0}", avgOfNumbers);
+            
+            Console.ReadLine();
+        }
+
+        public static int CheckAscendingOrDescendingNumber(int i_numberToCheck)
+        {
+            int isAscending = 0;
+            int isDescending = 0;
+            int digitSaved = i_numberToCheck % 10;
+
+            if (i_numberToCheck / 10 == 0)
+            {
+                i_numberToCheck = 0;
+            }
+            while (i_numberToCheck > 0)
+            {
+                i_numberToCheck /= 10;
+
+                if (digitSaved > i_numberToCheck % 10)
+                {
+                    isAscending++;
+                }
+                else if (digitSaved < i_numberToCheck % 10)
+                {
+                    isDescending++;
+                }
+                digitSaved = i_numberToCheck % 10;
+                if (i_numberToCheck < 10)
+                {
+                    break;
+                }
+            }
+            if (isAscending > 0 && isDescending == 0)
+            {
+                return 1;
+            }
+            if (isDescending > 0 && isAscending == 0)
+            {
+                return 2;
+            }
+            return 0;
+        }
+
+        public static string DecimalToBinary(int i_numberToConvert)
+        {
+            string result = string.Empty;
+            while (i_numberToConvert > 0)
+            {
+                int remainder = i_numberToConvert % 2;
+                i_numberToConvert /= 2;
+                result = remainder.ToString() + result;
+            }
+            return result;
+        }
+    }
+}
