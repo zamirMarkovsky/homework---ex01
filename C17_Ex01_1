@@ -2,69 +2,75 @@ using System;
 
 namespace C17_Ex01_1
 {
+    
     class Program
     {
         public const int k_NumberOfUserInputs = 4;
-        public const int k_NumberOfdigits = 4;
+        public const int k_NumberOfDigits = 4;
+
+        private enum eOrder { NONE, ASC, DESC };
+    
+
         public static void Main()
         {
             int io_bineryNumbersLengthSum = 0;
             int io_counterOfAscendingNums = 0;
             int io_counterOfDescendingNums = 0;
             int io_numbersSum = 0;
-            int inteructionsCounter = 1;
+            int interactionsCounter = 1;
 
-            Console.WriteLine("Please enter {0} numbers with {1} digits each: \n", k_NumberOfUserInputs, k_NumberOfdigits);
+            Console.WriteLine("Please enter {0} numbers with {1} digits each: \n", k_NumberOfUserInputs, k_NumberOfDigits);
 
-            while (inteructionsCounter <= k_NumberOfUserInputs)
+            while (interactionsCounter <= k_NumberOfUserInputs)
             {
                 int numberFromUser;
 
-                Console.Write("Number {0}: ", inteructionsCounter);
+                Console.Write("Number {0}: ", interactionsCounter);
                 string numberUserInput = Console.ReadLine();
 
-                bool validNumberfromUser = int.TryParse(numberUserInput, out numberFromUser);
-                if (numberUserInput != null)
-                {
-                    validNumberfromUser = validNumberfromUser && (numberFromUser > 0) && (numberUserInput.Length == 4);
-                }
-                if (!validNumberfromUser)
+                if (string.IsNullOrEmpty(numberUserInput) || numberUserInput.Length != 4 || !int.TryParse(numberUserInput, out numberFromUser))
                 {
                     Console.WriteLine("invalid input, please try again!");
+                    continue;
                 }
-                else
-                {
-                    string numberInBinary = DecimalToBinary(numberFromUser);
-                    Console.WriteLine("Number {0} in binary: {1}", inteructionsCounter, numberInBinary);
-                    io_bineryNumbersLengthSum += numberInBinary.Length;
 
-                    int isNumAscendingOrDescending = CheckAscendingOrDescendingNumber(numberFromUser);
-                    if (isNumAscendingOrDescending == 1)
-                    {
-                        io_counterOfAscendingNums++;
-                    }
-                    else if (isNumAscendingOrDescending == 2)
-                    {
-                        io_counterOfDescendingNums++;
-                    }
-                    io_numbersSum += numberFromUser;
-                    inteructionsCounter++;
+                string numberInBinary = DecimalToBinary(numberFromUser);
+                io_bineryNumbersLengthSum += numberInBinary.Length;
+
+                Console.WriteLine("Number {0} in binary: {1}, len: {2}, total len: {3}", interactionsCounter, numberInBinary, numberInBinary.Length, io_bineryNumbersLengthSum);
+
+                eOrder eNumOrder = CheckAscendingOrDescendingNumber(numberFromUser);
+
+                //int isNumAscendingOrDescending = CheckAscendingOrDescendingNumber(numberFromUser);
+                if (eNumOrder == eOrder.ASC)
+                {
+                    io_counterOfAscendingNums++;
                 }
+                else if (eNumOrder == eOrder.DESC)
+                {
+                    io_counterOfDescendingNums++;
+                }
+
+                io_numbersSum += numberFromUser;
+                interactionsCounter++;
+
             }
+
             Console.WriteLine("===============================================");
+            Console.Write("interactionsCounter: {0}, io_numbersSum: {1}", (interactionsCounter - 1) , io_numbersSum);
 
             float avgOfBinaryNumLengths = (float)io_bineryNumbersLengthSum / k_NumberOfUserInputs;
             float avgOfNumbers = (float)io_numbersSum / k_NumberOfUserInputs;
 
             Console.WriteLine("The avarage of binary numbers lengths is {0}", avgOfBinaryNumLengths);
             Console.WriteLine("There are {0} numbers which are ascending series and {1} which are descending",
-                              io_counterOfAscendingNums, io_counterOfDescendingNums);
+                io_counterOfAscendingNums, io_counterOfDescendingNums);
             Console.WriteLine("The avarage of numbers inserted is {0}", avgOfNumbers);
-            
+
             Console.ReadLine();
         }
 
-        public static int CheckAscendingOrDescendingNumber(int i_numberToCheck)
+        private static eOrder CheckAscendingOrDescendingNumber(int i_numberToCheck)
         {
             int isAscending = 0;
             int isDescending = 0;
@@ -94,13 +100,15 @@ namespace C17_Ex01_1
             }
             if (isAscending > 0 && isDescending == 0)
             {
-                return 1;
+                return eOrder.ASC;
             }
             if (isDescending > 0 && isAscending == 0)
             {
-                return 2;
+                return eOrder.DESC;
             }
-            return 0;
+
+            return eOrder.NONE;
+            //return 0;
         }
 
         public static string DecimalToBinary(int i_numberToConvert)
